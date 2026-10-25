@@ -1,0 +1,114 @@
+
+Test 1: Protected command without login
+  Expected: ERROR|Authentication required
+  Actual:   ERROR|Authentication required
+  Result:   PASS
+
+Test 2: OTP sent before password
+  Expected: ERROR|Password verification required before OTP
+  Actual:   ERROR|Password verification required before OTP
+  Result:   PASS
+
+Test 3: Failed authentication (wrong password)
+  Expected: ACCESS_DENIED
+  Actual:   ACCESS_DENIED
+  Result:   PASS
+
+Test 4: Correct password, wrong OTP
+  Expected: ACCESS_DENIED
+  Actual:   ACCESS_DENIED
+  Result:   PASS
+
+Test 5: Successful authentication (password + TOTP)
+  Expected: ACCESS_GRANTED|analyst
+  Actual:   ACCESS_GRANTED|analyst
+  Result:   PASS
+
+Test 6: Replay of an already-used OTP
+  Expected: ACCESS_DENIED
+  Actual:   ACCESS_DENIED
+  Result:   PASS
+
+Test 7: Analyst runs admin-only STATUS
+  Expected: ERROR|Not authorized
+  Actual:   ERROR|Not authorized
+  Result:   PASS
+
+Test 8: PCAP summary sent to client
+  Expected: 123 packets (113 TCP, 10 UDP)
+  Actual:   123 packets (113 TCP, 10 UDP), 17.82 s
+  Result:   PASS
+
+Test 9: PCAP suspicious-pattern detection
+  Expected: port scan, SYN flood/brute force, non-DNS on port 53
+  Actual:   PORT SCAN: 192.0.2.50 sent SYNs to 20 ports (20-39) in 0.86 s, packets 82-101
+            SYN FLOOD / BRUTE FORCE: 192.0.2.60 sent 16 unanswered SYNs to 192.0.2.10:22 in 0.53 s, packets 102-117
+            NON-DNS DATA ON PORT 53: 10 packets (packets 72-81), payload b'lab-traffic' is shorter than a 12-byte DNS header
+  Result:   PASS
+
+Test 10: Invalid file name (path traversal)
+  Expected: ERROR|Invalid file name...
+  Actual:   ERROR|Invalid file name. Use PCAP|name.pcap
+  Result:   PASS
+
+Test 11: Unknown command
+  Expected: ERROR|Unknown command
+  Actual:   ERROR|Unknown command 'DELETE_EVERYTHING'
+  Result:   PASS
+
+Test 12: Admin runs STATUS
+  Expected: OK|{...diagnostics...}
+  Actual:   OK|{"connections": 5, "logins": 3, "failed_logins": 3, "denied": 2, "uptime_s": 2, "threads": 1}
+  Result:   PASS
+
+Test 13: Account locked after 5 failures
+  Expected: ERROR|Account locked
+  Actual:   ERROR|Account locked
+  Result:   PASS
+
+Test 14: Port scan finds open ports
+  Expected: 5050 (server) and 8765 (website) open
+  Actual:   [5000, 5050, 5900, 8765]
+  Result:   PASS
+
+Test 15: Port scan reports a closed port
+  Expected: 5051 closed
+  Actual:   5051 closed
+  Result:   PASS
+
+Test 16: Scanner rejects unauthorized target
+  Expected: ValueError (not authorized)
+  Actual:   Target '8.8.8.8' is not authorized. Allowed: 127.0.0.1, localhost
+  Result:   PASS
+
+Test 17: HTTP security findings
+  Expected: plain HTTP, missing headers, weak cookie, server banner
+  Actual:   [('/', 200), ('/health', 200), ('/redirect', 302), ('/missing', 404)]
+            Plain HTTP: traffic and cookies are not encrypted
+            Missing header Content-Security-Policy on /
+            Missing header X-Frame-Options on /
+            Missing header X-Content-Type-Options on /
+            Missing header Referrer-Policy on /
+            Cookie 'training_session' has no HttpOnly flag
+            Cookie 'training_session' has no Secure flag
+            Cookie 'training_session' has no SameSite flag
+            Server banner disclosed: FSCT8561LabHTTP/1.0 
+            /redirect redirects to / (same site, not an open redirect)
+  Result:   PASS
+
+Test 18: HTTP connection failure
+  Expected: Could not connect...
+  Actual:   Could not connect to http://127.0.0.1:8799/ - is test_website.py running?
+  Result:   PASS
+
+Test 19: Server disconnects while client connected
+  Expected: ConnectionError handled
+  Actual:   ConnectionError: Server closed the connection
+  Result:   PASS
+
+Test 20: Security log contains no passwords or OTPs
+  Expected: nothing leaked
+  Actual:   72 log lines, leaked=[]
+  Result:   PASS
+
+20/20 tests passed
