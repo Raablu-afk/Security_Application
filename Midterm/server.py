@@ -1,14 +1,6 @@
-# Operation Sentinel - TCP server
+# server
 # Based on Lab 1 Challenge/Server.py (threads) and Lab 3 Auth_Server.py (password + OTP state machine)
-#
-# Protocol: one message per line, fields separated by "|"
-#   AUTH|username|password  -> OTP_REQUIRED | ACCESS_DENIED | ERROR|...
-#   OTP|123456              -> ACCESS_GRANTED|role | ACCESS_DENIED | ERROR|...
-#   LIST                    -> OK|file1.pcap,file2.pcap         (login required)
-#   PCAP|file.pcap          -> OK|{json results}                 (login required)
-#   STATUS                  -> OK|{json diagnostics}             (admin only)
-#   LOGOUT                  -> OK|Logged out
-#   QUIT                    -> BYE
+
 import json
 import logging
 import os
